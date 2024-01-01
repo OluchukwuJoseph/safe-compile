@@ -36,3 +36,60 @@ char *check_gcc(void)
 	free(path_env_copy);
 	return (NULL);
 }
+
+/**
+ * add_flags - Adds compilation flags to an array, combining a set of default flags with user-provided flags.
+ * @compiler_flags:  Array to store compilation flags.
+ * @user_flags: Array containing user-provided compilation flags.
+ * Return: Nothing
+ */
+void add_flags(char **compiler_flags, char **user_flags)
+{
+	int i = 1, j = 1;
+
+	/*Set default compilation flags*/
+	compiler_flags[j++] = "-Wall";
+	compiler_flags[j++] = "-Werror";
+	compiler_flags[j++] = "-Wextra";
+	compiler_flags[j++] = "-pedantic";
+	compiler_flags[j++] = "-std=gnu89";
+
+	/*Copy user-provided flags to the compiler flags array*/
+	while (user_flags[i] != NULL)
+	{
+		compiler_flags[j] = strdup(user_flags[i]);
+		i++;
+		j++;
+	}
+	compiler_flags[j] = NULL;
+}
+
+int execute_gcc(char **gcc_flags, char **env)
+{
+	pid_t id;
+	int status;
+
+	id = fork();
+	if (id < 0)
+		return (1);
+	if (id > 0)
+	{
+		wait(&status);
+
+		if (WEXITSTATUS(status) == 0)
+			return (0);
+		else
+			return (1);
+	}
+
+	if (id == 0)
+	{
+		if (execve(gcc_flags[0], gcc_flags, env) == -1)
+		{
+			perror("Could not execute file\n");
+			exit(EXIT_FAILURE);
+		}
+		exit(EXIT_SUCCESS);
+	}
+	return (0);
+}
