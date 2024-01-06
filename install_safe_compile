@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Get the full path of the directory containing this script
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+# Define the executable file name
+EXECUTABLE="compile"
+
+# Construct the full path to the executable
+EXECUTABLE_PATH="$SCRIPT_DIR/$EXECUTABLE"
+
+# Check if the executable file exists
+if [ -x "$EXECUTABLE_PATH" ]; then
+	# Copy the executable to /bin
+	sudo cp "$EXECUTABLE_PATH" /bin/
+	
+	# Copy the executable to /usr/bin
+	sudo cp "$EXECUTABLE_PATH" /usr/bin/
+
+	echo "SUCCESS!"
+else
+	# Display an error message if the executable doesn't exist or is not executable
+	echo "Error: $EXECUTABLE not found or not executable in '$SCRIPT_DIR'. Please ensure the file exists and is executable."
+fi
+
