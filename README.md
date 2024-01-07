@@ -28,11 +28,25 @@ Once you've cloned or forked the repository, navigate to the directory and execu
 
 ## Usage
 
-Provide more detailed information on how to use Safe Compile, including command options, examples, and potential use cases.
+There are two primary ways to use Safe-Compile:
+
+1. **With the `-o` Flag**:
+```shell
+compile main.c [other files] -o main
+```
+This command compiles the specified files, including `main.c` and any additional files provided, into an executable named `main`.
+
+2. **Without the `-o` Flag**:
+```shell
+compile main.c [other files]
+```
+When running `safe-compile` without the `-o` flag, the output file will be named after the first file that was passed. In this case, it will generate an executable named `main`.
+
+**Additional Notes**:
+- Ensure the necessary files are listed in the correct order for compilation.
+- If no output file is explicitly specified with the `-o` flag, the resulting executable will adopt the name of the first file passed in the command.
 
 ## Contributing
-
-We welcome contributions to Safe Compile! To contribute to this project, please follow these guidelines:
 
 1. Fork the repository and clone it locally.
 2. Create a new branch for your contributions.
