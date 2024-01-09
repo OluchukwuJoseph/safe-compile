@@ -15,16 +15,18 @@ Safe Compile is a program designed to enhance the safety of compiling your C cod
 
 You have two options to get started:
 - **Clone the repository:** Use the following command in your terminal:
-
-`git clone https:/github.com/OluchukwuJoseph/safe-compile.git`
+```shell
+git clone https:/github.com/OluchukwuJoseph/safe-compile.git`
+```
 
 - **Fork the Repository:** Navigate to the repository's page and fork it to your own GitHub account.
 
 ### Step 2: Run the Bash Script
 
 Once you've cloned or forked the repository, navigate to the directory and execute the following command in your terminal:
-
-`./install_safe_compile`
+```shell
+./install_safe_compile
+```
 
 ## Usage
 
