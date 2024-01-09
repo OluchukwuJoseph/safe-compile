@@ -41,3 +41,24 @@ char *add_strings(char *first_string, char *second_string, char *thrid_string)
 	output[i] = '\0';
 	return (output);
 }
+
+/**
+  * contains_string - Checks if a string is present in an array of strings.
+  * @string_array: Array of strings to search.
+  * @target_string: String to check for in the array.
+  * @length: Length of compilation arguments.
+  * Return: 0 if the target string is found in the array.
+  * Returns 1 if the target string is not found.
+  */
+int contains_string(char **string_array, char *target_string, int length)
+{
+	int i = 0;
+
+	while (i < length)
+	{
+		if (strcmp(string_array[i], target_string) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}

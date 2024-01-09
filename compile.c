@@ -3,6 +3,7 @@
 int main(int ac, char **av, char **environ)
 {
 	char *gcc_path = NULL, **args = NULL;
+	int status;
 
 	gcc_path = check_gcc();
 	if (gcc_path == NULL)
@@ -15,16 +16,32 @@ int main(int ac, char **av, char **environ)
 				"- For Windows: Download and install MinGW from https://mingw-w64.org/doku.php\n");
 		return (1);
 	}
-	args = (char **)malloc(sizeof(char *) * (ac + 6));
-	if (args == NULL)
+	if (contains_string(av, "-o", ac) == 0)
 	{
-		free(gcc_path);
-		return (-1);
+		status = add_arguments(&args, av, ac);
+		if (status == 1)
+		{
+			fprintf(stderr, "Memry Allocation Failed\n");
+			return (2);
+		}
 	}
-	args[0] = strdup(gcc_path);
-	/*Add compilation flags to the args array*/
-	add_flags(args, av);
+	else
+	{
+		status = add_arguments_advanced(&args, av, ac);
+		if (status == 1)
+		{
+			fprintf(stderr, "Memry Allocation Failed\n");
+			return (3);
+		}
+		status = 2;
+	}
+	args[0] = gcc_path;
 	if (execute_gcc(args, environ) == 1)
 		return (98);
+	free(gcc_path);
+	if (status == 2)
+		free_last_string(args);
+	else
+		free_double_pointer(args);
 	return (0);
 }

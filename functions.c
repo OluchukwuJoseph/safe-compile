@@ -38,30 +38,65 @@ char *check_gcc(void)
 }
 
 /**
- * add_flags - Adds compilation flags to an array, combining a set of default flags with user-provided flags.
- * @compiler_flags:  Array to store compilation flags.
- * @user_flags: Array containing user-provided compilation flags.
- * Return: Nothing
+ * add_arguments - Adds compilation arguments to an array,
+ * combining a set of default flags with user-provided flags.
+ * @compiler_arguments: Array to store compilation arguments.
+ * @user_arguments: Array containing user-provided compilation arguments.
+ * @length: Length of compilation arguments.
+ * Return: 0 on success.
+ * Returns 1 if memory allocation fails.
  */
-void add_flags(char **compiler_flags, char **user_flags)
+int add_arguments(char ***compiler_arguments, char **user_arguments, int length)
 {
 	int i = 1, j = 1;
 
+	*compiler_arguments = (char **)malloc(sizeof(char *) * (length + 6));
+	if (*compiler_arguments == NULL)
+		return (1);
 	/*Set default compilation flags*/
-	compiler_flags[j++] = "-Wall";
-	compiler_flags[j++] = "-Werror";
-	compiler_flags[j++] = "-Wextra";
-	compiler_flags[j++] = "-pedantic";
-	compiler_flags[j++] = "-std=gnu89";
-
+	(*compiler_arguments)[j++] = "-Wall";
+	(*compiler_arguments)[j++] = "-Werror";
+	(*compiler_arguments)[j++] = "-Wextra";
+	(*compiler_arguments)[j++] = "-pedantic";
+	(*compiler_arguments)[j++] = "-std=gnu89";
 	/*Copy user-provided flags to the compiler flags array*/
-	while (user_flags[i] != NULL)
-	{
-		compiler_flags[j] = strdup(user_flags[i]);
-		i++;
-		j++;
-	}
-	compiler_flags[j] = NULL;
+	for (i = 1; i < length; i++, j++)
+		(*compiler_arguments)[j] = strdup(user_arguments[i]);
+	(*compiler_arguments)[j] = NULL;
+
+	return (0);
+}
+
+/**
+ * add_arguments_advanced - Adds compilation arguments to an array,
+ * combining a set of default flags, user-provided arguments, and new output file.
+ * @compiler_arguments: Array to store compilation arguments.
+ * @user_arguments: Array containing user-provided compilation arguments.
+ * @length: Length of compilation arguments.
+ * Return: 0 on success.
+ * 1 if memory allocation fails.
+ */
+int add_arguments_advanced(char ***compiler_arguments, char **user_arguments, int length)
+{
+	int i = 1, j = 6;
+
+	*compiler_arguments = (char **)malloc(sizeof(char *) * (length + 8));
+	if (*compiler_arguments == NULL)
+		return (1);
+	/*Add standard flags to the modified array*/
+	(*compiler_arguments)[1] = "-Wall";
+	(*compiler_arguments)[2] = "-Werror";
+	(*compiler_arguments)[3] = "-Wextra";
+	(*compiler_arguments)[4] = "-pedantic";
+	(*compiler_arguments)[5] = "-std=gnu89";
+	/*Copy original arguments to the modified array*/
+	for (i = 1; i < length; i++, j++)
+		(*compiler_arguments)[j] = user_arguments[i];
+	/*Add output file option and its name to the modified array*/
+	(*compiler_arguments)[j++] = "-o";
+	(*compiler_arguments)[j++] = remove_extension(user_arguments, length);
+	(*compiler_arguments)[j] = NULL;
+	return (0);
 }
 
 int execute_gcc(char **gcc_flags, char **env)
@@ -92,4 +127,38 @@ int execute_gcc(char **gcc_flags, char **env)
 		exit(EXIT_SUCCESS);
 	}
 	return (0);
+}
+
+/*
+ * remove_extension - Extracts filename without extension from command-line args
+ * @argv: An array of strings representing command-line arguments.
+ * Return: Name of file without extension if a non-flag argument is found
+ * Memory is allocated using malloc, and the caller is responsible for freeing it.
+ * If no such argument is found, or if memory allocation fails, it returns NULL.
+ */
+char *remove_extension(char **command_line_args, int length)
+{
+	int i = 1, j = 0, string_length = 0;
+	char *file_name = NULL;
+
+	while (i < length)
+	{
+		if (command_line_args[i][0] != '-')
+		{
+			/*Calculate the length of the filename without extension*/
+			for (; command_line_args[i][j] != '.' || '\0'; j++)
+				string_length++;
+			/*Allocate memory for the filename without extension*/
+			file_name = (char *)malloc(sizeof(char) * (string_length + 1));
+			if (file_name == NULL)
+				return (NULL);
+			/*Copy characters to the new string*/
+			for (j = 0; j < string_length; j++)
+				file_name[j] = command_line_args[i][j];
+			file_name[j] = '\0';
+			return (file_name);
+		}
+		i++;
+	}
+	return (NULL);
 }
