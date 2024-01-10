@@ -7,7 +7,7 @@ Safe Compile is a program designed to enhance the safety of compiling your C cod
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [Issues](#issues)
-- [Lincense](#license)
+- [License](#license)
 
 ## Installation
 
